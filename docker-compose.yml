@@ -16,7 +16,7 @@ services:
       context: .
       dockerfile: adapter.Dockerfile
     ports:
-      - "8000:8000"
+      - "3008:8000"
     depends_on:
       - piper
     restart: unless-stopped
@@ -31,7 +31,7 @@ services:
       python3 -m piper.http_server -m en_US-lessac-medium --host 0.0.0.0 --port 5000
       "
     ports:
-      - "5000:5000"
+      - "3002:5000"
     restart: unless-stopped
 
 volumes:
