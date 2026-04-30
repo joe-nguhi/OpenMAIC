@@ -11,5 +11,28 @@ services:
       - openmaic-data:/app/data
     restart: unless-stopped
 
+  tts-adapter:
+    build:
+      context: .
+      dockerfile: adapter.Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - piper
+    restart: unless-stopped
+
+  piper:
+    image: python:3.11-slim
+    working_dir: /app
+    command: >
+      sh -c "
+      pip install piper-tts[http] &&
+      python3 -m piper.download_voices en_US-lessac-medium &&
+      python3 -m piper.http_server -m en_US-lessac-medium --host 0.0.0.0 --port 5000
+      "
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+
 volumes:
   openmaic-data:
