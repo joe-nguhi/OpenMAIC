@@ -38,10 +38,11 @@ async def tts(request: Request):
         
 
         text = data.get("input", "") or " "
-        model = data.get("model", "tts-1")
+        # model = data.get("model", "tts-1")
+        voice_input = data.get("voice", "").strip()
         
         # Map model → voice
-        voice = VOICE_MAP.get(model, model)
+        voice = VOICE_MAP.get(voice_input, voice_input)
 
         if voice not in AVAILABLE_VOICES:
             logging.warning(f"Unknown voice '{voice}', falling back")
