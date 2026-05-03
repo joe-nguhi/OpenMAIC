@@ -27,6 +27,8 @@ VOICE_MAP = {
 
 DEFAULT_VOICE = "en_US-lessac-medium"
 
+AVAILABLE_VOICES = set(VOICE_MAP.values())
+
 @app.post("/v1/audio/speech")
 async def tts(request: Request):
     try:
@@ -39,7 +41,11 @@ async def tts(request: Request):
         model = data.get("model", "tts-1")
         
         # Map model → voice
-        voice = VOICE_MAP.get(model, DEFAULT_VOICE)
+        voice = VOICE_MAP.get(model, model)
+
+        if voice not in AVAILABLE_VOICES:
+            logging.warning(f"Unknown voice '{voice}', falling back")
+            voice = DEFAULT_VOICE
 
         logging.info(f"Using voice: {voice}")
 
