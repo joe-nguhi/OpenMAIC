@@ -16,6 +16,17 @@ logging.basicConfig(
 
 PIPER_URL = "http://piper:5000"
 
+# 🔊 Voice mapping
+VOICE_MAP = {
+    "tts-1": "en_US-lessac-medium",   # default
+    "lessac": "en_US-lessac-medium",
+    "amy": "en_US-amy-medium",
+    "british": "en_GB-northern_english_male-medium"
+}
+
+
+DEFAULT_VOICE = "en_US-lessac-medium"
+
 @app.post("/v1/audio/speech")
 async def tts(request: Request):
     try:
@@ -23,12 +34,24 @@ async def tts(request: Request):
 
         logging.info(f"Incoming request JSON: {data}")
         
-        text = data.get("input", "")
+
+        text = data.get("input", "") or " "
+        model = data.get("model", "tts-1")
         
+        # Map model → voice
+        voice = VOICE_MAP.get(model, DEFAULT_VOICE)
+
+        logging.info(f"Using voice: {voice}")
+
         r = requests.post(
             PIPER_URL,
-            json={"text": text}
+            json={
+                "text": text,
+                "voice": voice
+            },
+            timeout=30
         )
+
 
         logging.info(f"Piper status: {r.status_code}")
 
@@ -36,3 +59,11 @@ async def tts(request: Request):
     except Exception as e:
         logging.error(f"Error: {e}", exc_info=True)
         return Response(content=str(e), status_code=500)
+
+# 🔍 Optional: list available mappings
+@app.get("/v1/voices")
+def list_voices():
+    return {
+        "available_models": list(VOICE_MAP.keys()),
+        "default": DEFAULT_VOICE
+    }
