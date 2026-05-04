@@ -21,7 +21,9 @@ VOICE_MAP = {
     "tts-1": "en_US-lessac-medium",   # default
     "lessac": "en_US-lessac-medium",
     "amy": "en_US-amy-medium",
-    "british": "en_GB-northern_english_male-medium"
+    "british": "en_GB-northern_english_male-medium",
+    "joe": "en_US-joe-medium",
+    "norman": "en_US-norman-medium",
 }
 
 
